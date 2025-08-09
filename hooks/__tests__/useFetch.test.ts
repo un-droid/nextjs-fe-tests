@@ -30,13 +30,12 @@ describe("useFetch", () => {
       .fn()
       .mockResolvedValue({ ok: true, json: async () => payload });
     vi.stubGlobal("fetch", fetchMock as unknown as typeof fetch);
-
     const { result } = renderHook(() =>
-      useFetch<typeof payload>("/api/slow", { immediate: false, initialData: initial })
+      useFetch<typeof payload>("/api/slow", { immediate: false, initialData: { ...initial, ok: true } })
     );
 
     expect(result.current.status).toBe("idle");
-    expect(result.current.data).toEqual(initial);
+    expect(result.current.data).toEqual({ ...initial, ok: true });
 
     await act(async () => {
       await result.current.run();
